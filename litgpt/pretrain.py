@@ -21,7 +21,7 @@ from typing_extensions import Literal
 from litgpt import Tokenizer
 from litgpt.args import EvalArgs, LogArgs, TrainArgs
 from litgpt.config import name_to_config
-from litgpt.data import DataModule, TinyLlama
+from litgpt.data import DataModule, TinyLlama, LongDataCollection
 from litgpt.model import GPT, Block, CausalSelfAttention, Config, LLaMAMLP
 from litgpt.parser_config import save_hyperparameters
 from litgpt.utils import (
@@ -80,7 +80,8 @@ def setup(
         model_config: A ``litgpt.Config`` object to define the model architecture. Mutually exclusive with
             ``model_config``. Overrides the `model_name` if specified.
         out_dir: Directory in which to save checkpoints and logs. If running in a Lightning Studio Job, look for it in
-            /teamspace/jobs/<job-name>/share.
+            /teamspace/jobs/<job-name    data = TinyLlama() if data is None else data
+>/share.
         precision: The precision to use for finetuning. Determines a compatible precision setting by default.
         initial_checkpoint_dir: Optional path to a checkpoint directory to initialize the model from.
             Useful for continued pretraining. Mutually exclusive with ``resume``.
@@ -121,7 +122,8 @@ def setup(
             quit()
 
     hparams = capture_hparams()
-    data = TinyLlama() if data is None else data
+    # data = TinyLlama() if data is None else data
+    data = LongDataCollection() if data is None else data
 
     config = Config.from_name(model_name) if model_config is None else model_config
     precision = precision or get_default_supported_precision(training=True)
